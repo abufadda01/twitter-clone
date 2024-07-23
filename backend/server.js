@@ -5,7 +5,9 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 import connectDB from "./db/connectDB.js"
 import errorHandler from "./middleware/errorHandler.js"
+
 import authRoutes from "./routes/authRoutes.js"
+import userRoutes from "./routes/userRoutes.js"
 
 dotenv.config({path : "./.env"})
 
@@ -24,6 +26,7 @@ app.use(cookieParser())
 
 // routes
 app.use("/api/auth" , authRoutes)
+app.use("/api/user" , userRoutes)
 
 
 

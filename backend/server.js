@@ -2,6 +2,7 @@ import express from "express"
 import dotenv from "dotenv"
 import colors from "colors"
 import cors from "cors"
+import {v2 as cloudinary} from "cloudinary"
 import cookieParser from "cookie-parser"
 import connectDB from "./db/connectDB.js"
 import errorHandler from "./middleware/errorHandler.js"
@@ -10,6 +11,16 @@ import authRoutes from "./routes/authRoutes.js"
 import userRoutes from "./routes/userRoutes.js"
 
 dotenv.config({path : "./.env"})
+
+
+// CLOUDINARY config
+cloudinary.config({
+    cloud_name : process.env.CLOUDINARY_CLOUD_NAME ,
+    api_key : process.env.CLOUDINARY_API_KEY ,
+    api_secret : process.env.CLOUDINARY_API_SECRET
+})
+
+
 
 const app = express()
 

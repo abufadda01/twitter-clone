@@ -9,6 +9,7 @@ import errorHandler from "./middleware/errorHandler.js"
 
 import authRoutes from "./routes/authRoutes.js"
 import userRoutes from "./routes/userRoutes.js"
+import postRoutes from "./routes/postRoutes.js"
 
 dotenv.config({path : "./.env"})
 
@@ -38,6 +39,7 @@ app.use(cookieParser())
 // routes
 app.use("/api/auth" , authRoutes)
 app.use("/api/user" , userRoutes)
+app.use("/api/post" , postRoutes)
 
 
 

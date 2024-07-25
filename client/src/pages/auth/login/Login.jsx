@@ -6,25 +6,54 @@ import XSvg from "../../../components/svgs/X";
 import { MdOutlineMail } from "react-icons/md";
 import { MdPassword } from "react-icons/md";
 
+import { axiosObj } from "../../../utils/axios/axiosObj.js";
+import {useMutation, useQueryClient} from "@tanstack/react-query"
+import toast from "react-hot-toast";
+
+
 
 const Login = () => {
+
+	const queryClient = useQueryClient()
 
 	const [formData, setFormData] = useState({
 		username: "",
 		password: "",
 	});
 
+
+	const {mutate , isPending , isError , error} = useMutation({
+		mutationFn : async ({username , password}) => {
+			try {
+				const response = await axiosObj.post("/api/auth/login" , {username , password})
+				toast.success("Welcome back")
+			} catch (error) {
+				console.log(error)
+				toast.error(error.response.data.msg)
+				throw new Error(error.response.data.msg)
+			}
+		},
+		onSuccess : () => {
+			// to execute the query fun that have this queryKey "authUser" after the login to authorize the user
+			queryClient.invalidateQueries({queryKey : ["authUser"]})
+		}
+	})
+
+
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		console.log(formData);
+		mutate(formData);
 	};
+
+
 
 
 	const handleInputChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
-	const isError = false;
+
 
 
 	return (
@@ -73,9 +102,9 @@ const Login = () => {
 
 					</label>
 
-					<button className='btn rounded-full btn-primary text-white'>Login</button>
+					<button className='btn rounded-full btn-primary text-white'>{isPending ? "Loading..." : "Login"}</button>
 
-					{isError && <p className='text-red-500'>Something went wrong</p>}
+					{isError && <p className='text-red-500'>{error.message}</p>}
 
 				</form>
 

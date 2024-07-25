@@ -6,6 +6,9 @@ import XSvg from "../../../components/svgs/X.jsx";
 import { FaUser } from "react-icons/fa";
 import { MdPassword , MdDriveFileRenameOutline , MdOutlineMail } from "react-icons/md";
 
+import {useMutation} from "@tanstack/react-query"
+import toast from "react-hot-toast";
+import { axiosObj } from "../../../utils/axios/axiosObj.js";
 
 
 
@@ -19,16 +22,34 @@ const Register = () => {
 	});
 
 
+
+	const {mutate , isPending , isError , error} = useMutation({
+		mutationFn : async ({email , username , fullName , password}) => {
+			try {
+				const response = await axiosObj.post("/api/auth/register" , {email , username , fullName , password})
+				toast.success("Account created successfully")
+				console.log(error)
+			} catch (error) {
+				console.log(error)
+				toast.error(error.response.data.msg)
+				throw new Error(error.response.data.msg)
+			}
+		},
+	})
+
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		console.log(formData);
+		// when we use mutate keyword we called the mutationFn inside the useMutation
+		mutate(formData);
 	};
+
 
 	const handleInputChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
-	const isError = false;
+
 
 
 
@@ -111,9 +132,9 @@ const Register = () => {
 
 					</label>
 
-					<button className='btn mt-2 rounded-full btn-primary text-white'>Sign up</button>
+					<button className='btn mt-2 rounded-full btn-primary text-white'>{isPending ? "Loading..." : "Sign up" }</button>
                     
-					{isError && <p className='text-red-500'>Something went wrong</p>}
+					{isError && <p className='text-red-500'>{error.message}</p>}
 
 				</form>
 

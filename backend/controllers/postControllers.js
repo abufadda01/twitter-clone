@@ -222,4 +222,80 @@ const getLikedPosts = async (req , res , next) => {
 
 
 
-export {createPost , likeUnlikePost , commentOnPost , deletePost , getAllPosts , getLikedPosts}
+const getFollowingPosts = async (req , res , next) => {
+
+    try {
+        
+        const loggedUserId = req.user._id
+
+        const user = await User.findById(loggedUserId)
+
+        if(!user){
+            return next(createError("User not found" , 404))
+        }
+
+        const userFollowingArr = user.following
+
+        const userFollowingPosts = await Post.find({user : {$in : userFollowingArr}})
+            .sort({createdAt : -1})
+            .populate("user")
+            .populate("comments.user")
+
+        res.status(200).json(userFollowingPosts)    
+
+    } catch (error) {
+        next(error)
+    }
+
+}
+
+
+
+
+
+const getUserPosts = async (req , res , next) => {
+
+    try {
+        
+        const {username} = req.params
+        const loggedUserId = req.user._id
+
+        const user = await User.findById(loggedUserId)
+
+        if(!user){
+            return next(createError("User not found" , 404))
+        }
+
+        const targetUser = await User.findOne({username})
+
+        if(!targetUser){
+            return next(createError("User not found" , 404))
+        }
+
+        const targetUserPosts = await Post.find({user : targetUser._id})
+            .sort({createdAt : -1})
+            .populate("user")
+            .populate("comments.user")
+
+        res.status(200).json(targetUserPosts)
+
+    } catch (error) {
+        next(error)
+    }
+
+}
+
+
+
+
+
+export {
+    createPost , 
+    likeUnlikePost , 
+    commentOnPost , 
+    deletePost , 
+    getAllPosts , 
+    getLikedPosts ,
+    getFollowingPosts,
+    getUserPosts
+}

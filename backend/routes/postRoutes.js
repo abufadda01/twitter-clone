@@ -1,6 +1,16 @@
 import express from "express"
 import auth from "../middleware/auth.js"
-import { createPost , likeUnlikePost , commentOnPost , deletePost, getAllPosts, getLikedPosts} from "../controllers/postControllers.js"
+
+import { 
+    createPost , 
+    likeUnlikePost , 
+    commentOnPost , 
+    deletePost , 
+    getAllPosts , 
+    getLikedPosts , 
+    getFollowingPosts ,
+    getUserPosts
+} from "../controllers/postControllers.js"
 
 
 const postRoutes = express.Router()
@@ -17,6 +27,10 @@ postRoutes.post("/comment/:postId" , auth , commentOnPost)
 postRoutes.delete("/:postId" , auth , deletePost)
 
 postRoutes.get("/liked" , auth , getLikedPosts)
+
+postRoutes.get("/following" , auth , getFollowingPosts)
+
+postRoutes.get("/user/:username" , auth , getUserPosts)
 
 
 

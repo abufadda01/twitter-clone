@@ -8,10 +8,12 @@ const register = async (req , res , next) => {
 
     const signUpSchema = Joi.object({
         username: Joi.string().required(),
-        fullname: Joi.string().required(),
+        fullName: Joi.string().required(),
         email: Joi.string().email().required(),
         password: Joi.string().min(6).required(),
     })
+
+    console.log(req.body)
 
     const {value , error} = signUpSchema.validate(req.body , {abortEarly : false})
     
@@ -21,7 +23,7 @@ const register = async (req , res , next) => {
     
     try {
         
-        const {username , fullname , email , password} = value
+        const {username , fullName , email , password} = value
         
         const isUserExist = await User.findOne({email})
         const isUserNameExist = await User.findOne({username})
@@ -37,7 +39,7 @@ const register = async (req , res , next) => {
         const newUser = new User({
             username,
             email,
-            fullname,
+            fullName,
             password
         })
         

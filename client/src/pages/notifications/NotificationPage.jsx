@@ -8,7 +8,7 @@ import { FaHeart } from "react-icons/fa6";
 
 const NotificationPage = () => {
 
-	const isLoading = true;
+	const isLoading = false;
 
 	const notifications = [
 		{

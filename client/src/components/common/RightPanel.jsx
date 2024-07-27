@@ -1,12 +1,32 @@
 import { Link } from "react-router-dom";
 import RightPanelSkeleton from "../skeletons/RightPanelSkeleton";
 import { USERS_FOR_RIGHT_PANEL } from "../../utils/db/dummy";
+import { useQuery } from "@tanstack/react-query";
+import { axiosObj } from "../../utils/axios/axiosObj";
+import toast from "react-hot-toast";
 
 
 
 const RightPanel = () => {
 
-	const isLoading = false;
+	const {data : suggestedUsers , isLoading } = useQuery({
+		queryKey : ["suggestedUsers"] ,
+		queryFn : async () => {
+			try {
+				const response = await axiosObj.get("/api/user/suggested")
+				return response.data
+			} catch (error) {
+				toast.error(error.response.data.msg)
+			}
+		}
+	})
+
+
+	if(suggestedUsers?.length === 0){
+		return <div className="md:64 w-0"></div>
+	} 
+
+
 
 	return (
 
@@ -30,7 +50,7 @@ const RightPanel = () => {
 
 					{!isLoading &&
 
-						USERS_FOR_RIGHT_PANEL?.map((user) => (
+						suggestedUsers?.map((user) => (
 
 							<Link
 								to={`/profile/${user.username}`}

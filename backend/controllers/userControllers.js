@@ -107,7 +107,7 @@ const getSuggestedUsers = async (req , res , next) => {
         ])
 
         
-        // filter the returned users array be remove the users that i already follwed them , and only keep the users that i dont follow them (not inside my following array) 
+        // filter the returned users array by remove the users that i already follwed them , and only keep the users that i dont follow them (not inside my following array) 
         const filteredUser = users.filter(user => !loggedUser.following.includes(user._id))
 
         // slice and get only 4 of them

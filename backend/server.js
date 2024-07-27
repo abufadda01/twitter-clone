@@ -6,6 +6,7 @@ import {v2 as cloudinary} from "cloudinary"
 import cookieParser from "cookie-parser"
 import connectDB from "./db/connectDB.js"
 import errorHandler from "./middleware/errorHandler.js"
+import morgan from "morgan"
 
 import authRoutes from "./routes/authRoutes.js"
 import userRoutes from "./routes/userRoutes.js"
@@ -28,7 +29,7 @@ const app = express()
 
 
 // middlewares
-app.use(express.json())
+app.use(express.json({limit : "5mb"})) // to limit the uploaded req file size to be up to 5 mega byte
 
 app.use(cors({
     origin: 'http://localhost:3000',
@@ -40,6 +41,10 @@ app.use(express.urlencoded({extended : true}))
 // to parse and access the req cookies
 app.use(cookieParser())
 
+if (process.env.NODE_ENV === "development") {
+    app.use(morgan("dev"));
+}
+  
 
 
 // routes

@@ -2,6 +2,9 @@ import { CiImageOn } from "react-icons/ci";
 import { BsEmojiSmileFill } from "react-icons/bs";
 import { useRef, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
+import { useQuery, useQueryClient , useMutation } from "@tanstack/react-query";
+import { axiosObj } from "../../utils/axios/axiosObj";
+import toast from "react-hot-toast";
 
 
 
@@ -9,19 +12,34 @@ const CreatePost = () => {
 
 	const [text, setText] = useState("");
 	const [img, setImg] = useState(null);
-
+	
 	const imgRef = useRef(null);
+	
+	const queryClient = useQueryClient()
+	const {data : authUser} =  useQuery({queryKey : ["authUser"]})
 
-	const isPending = false;
-	const isError = false;
+	const {mutate : createPost , isPending , isError , error} = useMutation({
+		mutationFn : async ({text , img}) => {
+			try {
+				const response = await axiosObj.post("/api/post/create" , {text , img})
+				return response.data
+			} catch (error) {
+				// toast.error(error.response.data.msg)
+				throw new Error(error.response.data.msg)
+			}
+		},
+		onSuccess : () => {
+			setText("")
+			setImg(null)
+			toast.success("post created successfully")
+			queryClient.invalidateQueries({queryKey : ["posts"]})
+		}
+	})
 
-	const data = {
-		profileImg: "/avatars/boy1.png",
-	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		alert("Post created successfully");
+		createPost({text , img})
 	};
 
 
@@ -44,7 +62,7 @@ const CreatePost = () => {
 	};
 
 
-
+	
 
 	return (
 
@@ -53,7 +71,7 @@ const CreatePost = () => {
 			<div className='avatar'>
 
 				<div className='w-8 rounded-full'>
-					<img src={data.profileImg || "/avatar-placeholder.png"} />
+					<img src={authUser.profileImg || "/avatar-placeholder.png"} />
 				</div>
 
 			</div>
@@ -107,7 +125,7 @@ const CreatePost = () => {
 
 				</div>
 
-				{isError && <div className='text-red-500'>Something went wrong</div>}
+				{isError && <div className='text-red-500'>{error.message}</div>}
 
 			</form>
 

@@ -225,7 +225,7 @@ const getLikedPosts = async (req , res , next) => {
 const getFollowingPosts = async (req , res , next) => {
 
     try {
-        
+         
         const loggedUserId = req.user._id
 
         const user = await User.findById(loggedUserId)

@@ -92,7 +92,10 @@ const likeUnlikePost = async (req , res , next) => {
 
             await Post.findByIdAndUpdate(post._id , {$pull : {likes : loggedUserId}} , {new : true})
             await User.findByIdAndUpdate(req.user._id , {$pull : {likedPosts : postId}} , {new : true})
-            res.status(200).json({msg : "Post unliked successfully"})
+            
+            const updatedLikes = post.likes.filter((userId) => userId.toString() !== loggedUserId.toString())
+
+            res.status(200).json(updatedLikes)
 
         }else{
 
@@ -110,7 +113,7 @@ const likeUnlikePost = async (req , res , next) => {
             await newNotification.save()
             await post.save()
             
-            res.status(200).json({msg : "Post liked successfully"})
+            res.status(200).json(post.likes)
 
         }
 

@@ -16,11 +16,14 @@ const Post = ({ post }) => {
 
 	const [comment, setComment] = useState("");
 	const postOwner = post.user;
-	const isLiked = false;
 
+	
 	const queryClient = useQueryClient()
-
+	
 	const {data : authUser} =  useQuery({queryKey : ["authUser"]})
+	
+	const isLiked = post.likes.includes(authUser._id);
+
 
 	const {mutate : deletePost , isPending} = useMutation({
 		mutationFn : async () => {
@@ -35,6 +38,32 @@ const Post = ({ post }) => {
 			toast.success("post deleted successfully")
 			// to recall the queryFun for the querykey that called posts to refetch the posts 
 			queryClient.invalidateQueries({queryKey : ["posts"]})
+		}
+	})
+
+
+
+	const {mutate : likePost , isPending : isLiking} = useMutation({
+		mutationFn : async () => {
+			try {
+				const res = await axiosObj.post(`/api/post/like/${post?._id}`)
+				return res.data
+			} catch (error) {
+				console.log(error)
+			}
+		},
+		onSuccess : (updatedLikes) => {
+			// updatedLikes parameter will be the value that came from mutationFn response what basiclly we return from it
+			// oldData will be the previous posts queryKey array we iterate over it then if it was the post that i like it i change the likes array value for this post to the value i get from the response
+			// more effiecent than recall the queryKey for the posts and refetch all posts again
+			queryClient.setQueryData(["posts"] , (oldData) => {
+				return oldData.map(pos => {
+					if(pos._id === post._id){
+						return {...pos , likes : updatedLikes}
+					}
+					return pos
+				})
+			})
 		}
 	})
 
@@ -59,7 +88,9 @@ const Post = ({ post }) => {
 
 
 
-	const handleLikePost = () => {};
+	const handleLikePost = () => {
+		likePost()
+	};
 
 
 
@@ -197,8 +228,8 @@ const Post = ({ post }) => {
 
 										<button className='btn btn-primary rounded-full btn-sm text-white px-4'>
 
-											{isCommenting ? (
-												<span className='loading loading-spinner loading-md'></span>
+											{isCommenting || isLiking ? (
+												<LoadingSpinner size="sm" />
 											) : (
 												"Post"
 											)}
@@ -230,7 +261,7 @@ const Post = ({ post }) => {
 
 								<span
 									className={`text-sm text-slate-500 group-hover:text-pink-500 ${
-										isLiked ? "text-pink-500" : ""
+										isLiked ? "text-pink-500" : "text-slate-500"
 									}`}
 								>
 									{post.likes.length}

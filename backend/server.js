@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser"
 import connectDB from "./db/connectDB.js"
 import errorHandler from "./middleware/errorHandler.js"
 import morgan from "morgan"
+import path from "path"
 
 import authRoutes from "./routes/authRoutes.js"
 import userRoutes from "./routes/userRoutes.js"
@@ -26,6 +27,8 @@ cloudinary.config({
 
 
 const app = express()
+
+const __dirname = path.resolve()
 
 
 // middlewares
@@ -56,6 +59,16 @@ app.use("/api/notification" , notificationRoutes)
 
 
 app.use(errorHandler)
+
+
+if(process.env.NODE_ENV === "production"){
+
+    app.use(express.static(path.join(__dirname , "/client/dist")))
+
+    app.get("*" , (req , res) => {
+        res.sendFile(path.resolve(__dirname , "client" , "dist" , "index.html"))
+    })
+}
 
 
 const port = process.env.PORT

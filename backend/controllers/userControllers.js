@@ -194,7 +194,7 @@ const updateUserProfile = async (req , res , next) => {
         
 
         if(fullName){
-            loggedUser.fullname = fullName
+            loggedUser.fullName = fullName
         }
 
         if(username){

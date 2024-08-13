@@ -113,6 +113,7 @@ const CreatePost = () => {
 							onClick={() => imgRef.current.click()}
 						/>
 
+						{/* add emoji package */}
 						<BsEmojiSmileFill className='fill-primary w-5 h-5 cursor-pointer' />
 
 					</div>

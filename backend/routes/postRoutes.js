@@ -26,7 +26,7 @@ postRoutes.post("/comment/:postId" , auth , commentOnPost)
 
 postRoutes.delete("/:postId" , auth , deletePost)
 
-postRoutes.get("/liked" , auth , getLikedPosts)
+postRoutes.get("/liked/:id" , auth , getLikedPosts)
 
 postRoutes.get("/following" , auth , getFollowingPosts)
 

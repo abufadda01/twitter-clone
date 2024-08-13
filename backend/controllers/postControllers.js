@@ -205,7 +205,7 @@ const getLikedPosts = async (req , res , next) => {
         
         const loggedUserId = req.user._id
 
-        const user = await User.findById(loggedUserId)
+        const user = await User.findById(req.params.id)
 
         if(!user){
             return next(createError("User not found" , 404))

@@ -17,10 +17,12 @@ const EditProfileModal = () => {
 		currentPassword: "",
 	});
 
+
 	const handleInputChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
+	
 	const queryClient = useQueryClient()
 
 

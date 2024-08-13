@@ -1,19 +1,27 @@
 import { CiImageOn } from "react-icons/ci";
 import { BsEmojiSmileFill } from "react-icons/bs";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 import { useQuery, useQueryClient , useMutation } from "@tanstack/react-query";
 import { axiosObj } from "../../utils/axios/axiosObj";
 import toast from "react-hot-toast";
 
+import EmojiPicker from 'emoji-picker-react'
 
 
 const CreatePost = () => {
 
 	const [text, setText] = useState("");
 	const [img, setImg] = useState(null);
-	
+	const [emojiPickerOpen , setEmojiPickerOpen] = useState(false)
+
 	const imgRef = useRef(null);
+	const emojiRef = useRef(null)
+
+	const handleAddEmoji = (emoji) => {
+		setText((text) => text + emoji.emoji)
+	}
+	
 	
 	const queryClient = useQueryClient()
 	const {data : authUser} =  useQuery({queryKey : ["authUser"]})
@@ -62,6 +70,28 @@ const CreatePost = () => {
 	};
 
 
+
+	useEffect(() => {
+
+		function handleClickOutSide(event){
+		  // if the clicked element (event.target) was not in the emojiRef (div that hold the emojies) close the emojies div
+		  // that means i clicked outside the emoji container
+		  if(emojiRef.current && !emojiRef.current.contains(event.target)){
+			setEmojiPickerOpen(false)
+		  }
+		  
+		}
+	
+		// add mouse down event in the all document , event.target will be the value of what we clicked over in the mouse down
+		document.addEventListener("mousedown" , handleClickOutSide)
+	
+		return () => {
+		  document.removeEventListener("mousedown" , handleClickOutSide)
+		}
+	
+	  } , [emojiRef])
+
+	  
 	
 
 	return (
@@ -106,7 +136,7 @@ const CreatePost = () => {
 
 				<div className='flex justify-between border-t py-2 border-t-gray-700'>
 
-					<div className='flex gap-1 items-center'>
+					<div className='flex relative gap-1 items-center'>
 
 						<CiImageOn
 							className='fill-primary w-6 h-6 cursor-pointer'
@@ -114,7 +144,13 @@ const CreatePost = () => {
 						/>
 
 						{/* add emoji package */}
-						<BsEmojiSmileFill className='fill-primary w-5 h-5 cursor-pointer' />
+						<div onClick={() => setEmojiPickerOpen(true)} className="absolute bottom-1.5 right-[-28px]">
+							<BsEmojiSmileFill  className='fill-primary w-5 h-5 cursor-pointer' />
+						</div>
+
+						<div ref={emojiRef} className='max-w-[80px] absolute bottom-2 top-4 right-[-120px]'>
+            				<EmojiPicker width={380} height={360} theme='dark' open={emojiPickerOpen} onEmojiClick={handleAddEmoji} autoFocusSearch={false} />
+          				</div>
 
 					</div>
 

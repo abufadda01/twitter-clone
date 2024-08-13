@@ -31,7 +31,8 @@ const Sidebar = () => {
 				const response = await axiosObj.post("/api/auth/logout")
 				toast.success("logged out successfully")
 				navigate("/login")
-				console.log(error)
+				window.location.reload()
+				return response.data
 			} catch (error) {
 				console.log(error)
 				toast.error(error.response.data.msg)

@@ -1,41 +1,46 @@
 import { Link } from "react-router-dom";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
+import {useQuery , useMutation , useQueryClient} from "@tanstack/react-query"
+import { axiosObj } from "../../utils/axios/axiosObj";
 
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
+import toast from "react-hot-toast";
+
 
 
 const NotificationPage = () => {
 
-	const isLoading = false;
+	const queryClient = useQueryClient()
 
-	const notifications = [
-		{
-			_id: "1",
-			from: {
-				_id: "1",
-				username: "johndoe",
-				profileImg: "/avatars/boy2.png",
-			},
-			type: "follow",
+	const {data : notifications , isLoading} = useQuery({
+		queryKey : ["notifications"] ,
+		queryFn : async () => {
+			try {
+				const res = await axiosObj.get(`/api/notification`)
+				return res.data
+			} catch (error) {
+				toast.error(error.response.data.msg)
+			}
+		}
+	}) 
+
+
+	const {mutate : deleteNotifications} = useMutation({
+		mutationFn : async () => {
+			try {
+				const res = await axiosObj.delete(`/api/notification`)
+				return res.data
+			} catch (error) {
+				toast.error(error.response.data.msg)
+			}
 		},
-		{
-			_id: "2",
-			from: {
-				_id: "2",
-				username: "janedoe",
-				profileImg: "/avatars/girl1.png",
-			},
-			type: "like",
-		},
-	];
+		onSuccess : () => {
+			queryClient.invalidateQueries({queryKey : ["notifications"]})
+		}
+	}) 
 
-
-
-	const deleteNotifications = () => {
-		alert("All notifications deleted");
-	};
 
 
 

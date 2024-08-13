@@ -9,6 +9,7 @@ import { useMutation, useQuery , useQueryClient } from "@tanstack/react-query";
 import { axiosObj } from "../../utils/axios/axiosObj";
 import toast from "react-hot-toast";
 import LoadingSpinner from "./LoadingSpinner";
+import { formatPostDate } from "../../utils/date";
 
 
 
@@ -68,11 +69,28 @@ const Post = ({ post }) => {
 	})
 
 
+
+	const {mutate : commentOnPost , isPending : isCommenting} = useMutation({
+		mutationFn : async ({comment}) => {
+			try {
+				const res = await axiosObj.post(`/api/post/comment/${post?._id}` , {text : comment})
+				return res.data
+			} catch (error) {
+				console.log(error)
+			}
+		},
+		onSuccess : () => {
+			setComment("")
+			queryClient.invalidateQueries({queryKey : ["posts"]})
+		}
+	})
+
+
+	
 	const isMyPost = authUser._id === post.user._id ;
 
-	const formattedDate = "1h";
 
-	const isCommenting = false;
+	const formattedDate = formatPostDate(post.createdAt);
 
 
 
@@ -80,10 +98,12 @@ const Post = ({ post }) => {
 		deletePost()
 	};
 
-
+	
 
 	const handlePostComment = (e) => {
 		e.preventDefault();
+		if(isCommenting) return
+		commentOnPost({comment})
 	};
 
 

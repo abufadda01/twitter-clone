@@ -4,8 +4,9 @@ import {useQuery , useMutation , useQueryClient} from "@tanstack/react-query"
 import { axiosObj } from "../../utils/axios/axiosObj";
 
 import { IoSettingsOutline } from "react-icons/io5";
-import { FaUser } from "react-icons/fa";
+import { FaUser , FaComment } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
+import { RiUserUnfollowLine } from "react-icons/ri";
 import toast from "react-hot-toast";
 
 
@@ -89,6 +90,8 @@ const NotificationPage = () => {
 
 							{notification.type === "follow" && <FaUser className='w-7 h-7 text-primary' />}
 							{notification.type === "like" && <FaHeart className='w-7 h-7 text-red-500' />}
+							{notification.type === "comment" && <FaComment className='w-7 h-7 text-green-500' />}
+							{notification.type === "unfollow" && <RiUserUnfollowLine className='w-7 h-7 text-purple-500' />}
 
 							<Link to={`/profile/${notification.from.username}`}>
 
@@ -101,8 +104,13 @@ const NotificationPage = () => {
 								</div>
 
 								<div className='flex gap-1'>
+
 									<span className='font-bold'>@{notification.from.username}</span>{" "}
-									{notification.type === "follow" ? "followed you" : "liked your post"}
+									{notification.type === "follow" && "followed you"}
+									{notification.type === "like" && "liked your post"}
+									{notification.type === "comment" && "commented on your post"}
+									{notification.type === "unfollow" && "unfollowed you"}
+									
 								</div>
 
 							</Link>

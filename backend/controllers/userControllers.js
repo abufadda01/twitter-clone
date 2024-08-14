@@ -53,9 +53,20 @@ const followUnfollowUser = async (req , res , next) => {
             // update the target user followers array and pull me from it
             // then update my following array and pull the target user id from it
         if(isFollowing){
+
             const updatedTargetdUser = await User.findByIdAndUpdate(userId , {$pull : {followers : req.user._id}} , {new : true})            
             const updatedLoggedUser = await User.findByIdAndUpdate(req.user._id , {$pull : {following : userId}} , {new : true})
-            res.status(200).json({updatedLoggedUser , updatedTargetdUser})            
+
+            const newNotification = new Notification({
+                from : req.user._id ,
+                to : targetUser._id ,
+                type : "unfollow"
+            }) 
+
+            await newNotification.save()
+
+            res.status(200).json({updatedLoggedUser , updatedTargetdUser})
+
         }else{
             // follow him
             // update the target user followers array and push me inside it

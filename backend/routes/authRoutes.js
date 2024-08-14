@@ -13,11 +13,11 @@ import auth from "../middleware/auth.js"
 const authRoutes = express.Router()
 
 
-authRoutes.get("/getMe" , auth , getMe)
-
 authRoutes.post("/register" , register)
 
 authRoutes.post("/login" , login)
+
+authRoutes.get("/getMe" , auth , getMe)
 
 authRoutes.post("/logout" , logout)
 

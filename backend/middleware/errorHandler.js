@@ -1,4 +1,4 @@
-const errorHandler = (err , req , res , next) => {
+const errorHandler = (err , req , res) => {
 
     let errorObject = {
         msg : err.message || "Something went wrong" ,
@@ -24,8 +24,6 @@ const errorHandler = (err , req , res , next) => {
         errorObject.msg = Object.values(err.errors).map(error => error.message)
         errorObject.status = 400
     }
-
-    // add an error handling case for enum non valid values
 
     res.status(errorObject.status).json({
         msg : errorObject.msg ,

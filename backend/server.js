@@ -35,19 +35,24 @@ const __dirname = path.resolve()
 app.use(express.json({limit : "5mb"})) // to limit the uploaded req file size to be up to 5 mega byte
 
 app.use(cors({
+    // origin: 'https://twitter-clone-c4lj.onrender.com',
     origin: 'http://localhost:3000',
     credentials: true
 }));
 
+
 app.use(express.urlencoded({extended : true}))
+
 
 // to parse and access the req cookies
 app.use(cookieParser())
+
 
 if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"));
 }
   
+
 
 
 // routes
@@ -68,6 +73,7 @@ if(process.env.NODE_ENV === "production"){
     app.get("*" , (req , res) => {
         res.sendFile(path.resolve(__dirname , "client" , "dist" , "index.html"))
     })
+
 }
 
 
@@ -82,5 +88,5 @@ const start = async () => {
     }
 }
 
-
+ 
 start()

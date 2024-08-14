@@ -150,6 +150,14 @@ const commentOnPost = async (req , res , next) => {
 
         post.comments.push(comment)
 
+        const newNotification = new Notification({
+            from : req.user._id ,
+            to : post.user ,
+            type : "comment"
+        })
+        
+        await newNotification.save()
+
         await post.save()
 
         res.status(201).json(post)

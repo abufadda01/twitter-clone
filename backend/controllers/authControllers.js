@@ -13,7 +13,6 @@ const register = async (req , res , next) => {
         password: Joi.string().min(6).required(),
     })
 
-    console.log(req.body)
 
     const {value , error} = signUpSchema.validate(req.body , {abortEarly : false})
     
@@ -26,6 +25,7 @@ const register = async (req , res , next) => {
         const {username , fullName , email , password} = value
         
         const isUserExist = await User.findOne({email})
+
         const isUserNameExist = await User.findOne({username})
         
         if(isUserExist){
@@ -50,10 +50,10 @@ const register = async (req , res , next) => {
         const token = newUser.signJWT()
 
         res.cookie("jwt" , token , {
-            httpOnly : true,
-            secure : process.env.NODE_ENV !== "development" ,
-            sameSite : "strict" ,
-            maxAge : 30 * 24 * 60 * 60 * 1000
+            httpOnly : true, // to not access the cookie in the user browser by js code
+            secure : process.env.NODE_ENV !== "development" , // if we are not in the development mode we cant send the cookie until the connection is https
+            sameSite : "strict" , // preventing the cookie from being sent in cross-site requests , which improves the security 
+            maxAge : 30 * 24 * 60 * 60 * 1000 // the cookie expire will be 30 days
         })  
 
         res.status(201).json(newUser)

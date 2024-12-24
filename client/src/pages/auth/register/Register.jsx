@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 import XSvg from "../../../components/svgs/X.jsx";
@@ -14,6 +14,8 @@ import { axiosObj } from "../../../utils/axios/axiosObj.js";
 
 const Register = () => {
 
+	const navigate = useNavigate()
+
 	const [formData, setFormData] = useState({
 		email: "",
 		username: "",
@@ -26,15 +28,16 @@ const Register = () => {
 	const {mutate , isPending , isError , error} = useMutation({
 		mutationFn : async ({email , username , fullName , password}) => {
 			try {
-				const response = await axiosObj.post("/api/auth/register" , {email , username , fullName , password})
+				await axiosObj.post("/api/auth/register" , {email , username , fullName , password})
 				toast.success("Account created successfully")
-				console.log(error)
 			} catch (error) {
-				console.log(error)
 				toast.error(error.response.data.msg)
 				throw new Error(error.response.data.msg)
 			}
 		},
+		onSuccess : () => {
+			navigate("/login")
+		}
 	})
 
 

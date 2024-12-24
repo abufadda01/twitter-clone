@@ -8,7 +8,7 @@ const getNotifications = async (req , res , next) => {
         
         const loggedUserId = req.user._id
 
-        const notifications = await Notification.find({to : loggedUserId}).populate({ path: "from", select: "username profileImg" });
+        const notifications = await Notification.find({to : loggedUserId}).populate({ path: "from", select: "username profileImg" }).sort({createdAt : -1})
 
         const updatedNotifications = await Promise.all((notifications.map((noti) => {
             return Notification.findByIdAndUpdate(noti._id , {read : true}).populate({ path: "from", select: "username profileImg" })
